@@ -89,7 +89,7 @@ public class Calculator {
             System.out.println("Para terminar digite x");
             System.out.println("Ingrese un digito: ");
             String sNumero = lectura.next();
-            if(sNumero.equals("x")){
+            if (sNumero.equals("x")) {
                 break;
             }
             try {
@@ -99,31 +99,34 @@ public class Calculator {
                 System.out.println("Error: El valor ingresado no es un número entero válido.");
             }
         } while (condicion);
+    
         do {
             System.out.println("--------------------------------");
             System.out.println("Numero 2, divisor");
             System.out.println("Para terminar digite x");
             System.out.println("Ingrese un digito: ");
             String sNumero = lectura.next();
-            if(sNumero.equals("x")){
+            if (sNumero.equals("x")) {
                 break;
             }
             try {
                 int iNumero = Integer.parseInt(sNumero);
+                if (iNumero == 0) {
+                    System.out.println("Error: No se puede dividir por cero.");
+                    return;
+                }
                 numero2.add(iNumero);
             } catch (NumberFormatException e) {
                 System.out.println("Error: El valor ingresado no es un número entero válido.");
             }
         } while (condicion);
-        LinkedList<Integer> dividendo = numero1;
-        LinkedList<Integer> divisor = numero2;
 
-        if (dividendo.isEmpty() ||divisor.isEmpty()) {
+        if (numero1.isEmpty() ||numero2.isEmpty()) {
             System.out.println("Error: La lista de dividendo o divisor está vacía.");
             return;
         }
 
-        if (divisor.peek() == 0) {
+        if (numero2.peek() == 0) {
             System.out.println("Error: No se puede dividir por cero.");
             return;
         }
@@ -131,22 +134,23 @@ public class Calculator {
         LinkedList<Integer> resultado = new LinkedList<>();
         int resto = 0;
 
-        Iterator<Integer> itDividendo = dividendo.reverseIterator();
-        Iterator<Integer> itDivisor = divisor.reverseIterator();
+        Iterator<Integer> itDividendo = numero1.reverseIterator();
+        Iterator<Integer> itDivisor = numero2.reverseIterator();
 
-        while (itDividendo.hasNext() || itDivisor.hasNext() || resto != 0) {
-            int digitoDividendo = itDividendo.hasNext() ? itDividendo.next() : 0;
-            int digitoDivisor = itDivisor.hasNext() ? itDivisor.next() : 0;
-
-            int division = digitoDividendo - resto;
-            if (division < 0) {
-                division += 10;
-                resto = division - digitoDivisor + 10;
-            } else {
-                resto = 0;
+        while (!numero1.isEmpty()) {
+            int digitoDividendo = numero1.pollLast(); // Obtener y eliminar el último dígito del dividendo
+            int digitoDivisor = numero2.pollLast(); // Obtener y eliminar el último dígito del divisor
+    
+            int division = digitoDividendo + resto * 10;
+            int moduloParcial = division % digitoDivisor;
+    
+            if (moduloParcial < 0) {
+                moduloParcial += digitoDivisor;
+                division -= moduloParcial + digitoDivisor;
             }
-
-            resultado.addFirst(division % digitoDivisor);
+    
+            resto = division / digitoDivisor;
+            resultado.addFirst(moduloParcial);
         }
 
 
